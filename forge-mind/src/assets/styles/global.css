@@ -1,0 +1,88 @@
+/* Global layout for all pages */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  font-family: 'Georgia', serif;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Logo */
+.logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 1rem;
+}
+
+/* Titles */
+.page-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+  color: #555;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Buttons */
+.primary-button {
+  background-color: #2e9d91;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s;
+  margin-top: 1rem;
+}
+
+.primary-button:hover {
+  background-color: #257d73;
+}
+
+/* Back to Home button */
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #1f766e;
+  font-weight: 500;
+}
+
+.back-button:hover {
+  color: #0b5345;
+}
+
+/* Form styling */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 300px;
+  max-width: 90%;
+}
+
+.auth-form input {
+  padding: 10px;
+  border: 1px solid #cddbd7;
+  border-radius: 4px;
+  background-color: #e9f5f1;
+  font-family: inherit;
+}
+
+.auth-form input:focus {
+  outline: none;
+  border-color: #2e9d91;
+}
