@@ -2,7 +2,8 @@
   <div class="auth-page">
     <!-- Form -->
     <div class="form-container">
-      <h2>Login</h2>
+      <h2>Welcome Back</h2>
+      <p>Sign in to continue your mental journey</p>
       <form>
         <input type="email" placeholder="Email" required />
         <input type="password" placeholder="Password" required />

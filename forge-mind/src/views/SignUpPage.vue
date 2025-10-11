@@ -2,7 +2,8 @@
   <div class="auth-page">
     <!-- Form -->
     <div class="form-container">
-      <h2>Sign Up</h2>
+      <h2>Start Your Journey</h2>
+      <p>Create an account to build mental resilience</p>
       <form>
         <input type="text" placeholder="Full Name" required />
         <input type="email" placeholder="Email" required />
@@ -38,6 +39,7 @@
   display: flex;
   flex-direction: column;
   text-align: center;
+  fill-opacity: #C5E8C8, 50% ;
 }
 
 h2 {
