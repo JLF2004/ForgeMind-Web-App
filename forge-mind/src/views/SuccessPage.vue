@@ -19,7 +19,7 @@
       <!-- Action Buttons with bounce animation -->
       <div class="action-buttons">
         <router-link 
-          to="/about" 
+          to="/dashboard" 
           class="btn primary bounce-in"
           :style="{ '--delay': '1s' }"
         >

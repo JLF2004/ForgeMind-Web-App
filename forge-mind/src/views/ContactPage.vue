@@ -21,18 +21,39 @@
           <!-- Contact Form -->
           <div class="contact-form fade-in-up" :style="{ animationDelay: '0.4s' }">
             <h3 class="form-title">Share Your Thoughts</h3>
-            <form @submit.prevent="handleSubmit">
+            <form @submit.prevent="handleSubmit" ref="contactForm">
               <div class="form-group">
                 <label for="fullName" class="form-label">Your Name</label>
-                <input type="text" id="fullName" class="form-input" placeholder="How would you like us to call you?" required>
+                <input 
+                  type="text" 
+                  id="fullName" 
+                  class="form-input" 
+                  placeholder="How would you like us to call you?" 
+                  required
+                  v-model="formData.fullName"
+                >
               </div>
               <div class="form-group">
                 <label for="email" class="form-label">Email Address</label>
-                <input type="email" id="email" class="form-input" placeholder="Where can we reach you?" required>
+                <input 
+                  type="email" 
+                  id="email" 
+                  class="form-input" 
+                  placeholder="Where can we reach you?" 
+                  required
+                  v-model="formData.email"
+                >
               </div>
               <div class="form-group">
                 <label for="message" class="form-label">Your Message</label>
-                <textarea id="message" class="form-textarea" rows="6" placeholder="Share what's on your mind... There's no judgment here." required></textarea>
+                <textarea 
+                  id="message" 
+                  class="form-textarea" 
+                  rows="6" 
+                  placeholder="Share what's on your mind... There's no judgment here." 
+                  required
+                  v-model="formData.message"
+                ></textarea>
               </div>
               <button type="submit" class="send-btn glow-hover">
                 <span class="btn-icon">💫</span>
@@ -141,12 +162,46 @@
 </template>
 
 <script setup>
-import NavigationBar from '@/components/NavigationBar.vue';
+import { ref } from 'vue'
+import NavigationBar from '@/components/NavigationBar.vue'
+
+// Form data refs
+const formData = ref({
+  fullName: '',
+  email: '',
+  message: ''
+})
+
+// Form reference
+const contactForm = ref(null)
 
 const handleSubmit = () => {
+  // Validate form
+  if (!formData.value.fullName.trim() || !formData.value.email.trim() || !formData.value.message.trim()) {
+    alert('Please fill in all fields before sending.')
+    return
+  }
+  
   // Handle form submission logic here
   alert('Thank you for reaching out. We\'ve received your message and will respond with care within 24 hours.');
-};
+  
+  // Reset the form
+  resetForm()
+}
+
+// Function to reset form
+const resetForm = () => {
+  formData.value = {
+    fullName: '',
+    email: '',
+    message: ''
+  }
+  
+  // Optional: Reset form validation state if using form library
+  if (contactForm.value) {
+    contactForm.value.reset()
+  }
+}
 </script>
 
 <style scoped>

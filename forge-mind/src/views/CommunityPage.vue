@@ -27,6 +27,7 @@
                 placeholder="What's on your mind? Share a thought, tip, or ask for advice..."
                 class="post-textarea"
                 maxlength="280"
+                ref="postTextarea"
               ></textarea>
               <div class="editor-actions">
                 <div class="char-count">{{ newPost.content.length }}/280</div>
@@ -79,7 +80,7 @@
           >
             <div class="post-header">
               <div class="user-info">
-                <div class="user-avatar small">
+                <div class="user-avatar small" :style="{ background: post.avatarColor }">
                   {{ getInitial(post.author) }}
                 </div>
                 <div class="user-details">
@@ -109,22 +110,22 @@
                 <span class="action-label">{{ post.liked ? 'Liked' : 'Send Support' }}</span>
               </button>
               
-              <button class="action-btn reply-btn" @click="focusReply(post)">
+              <button class="action-btn reply-btn" @click="toggleReplies(post)">
                 <span class="action-icon">💬</span>
                 <span class="action-count">{{ post.replies.length }}</span>
-                <span class="action-label">Share Support</span>
+                <span class="action-label">{{ post.showReplies ? 'Hide Replies' : 'Show Replies' }}</span>
               </button>
             </div>
 
             <!-- Replies Section -->
-            <div v-if="post.showReplies || post.replies.length > 0" class="replies-section">
+            <div v-if="post.showReplies" class="replies-section">
               <div class="replies-header">
                 <h4>Community Support 💫</h4>
                 <span class="replies-count">{{ post.replies.length }} supportive {{ post.replies.length === 1 ? 'reply' : 'replies' }}</span>
               </div>
               
               <div v-for="reply in post.replies" :key="reply.id" class="reply-card">
-                <div class="user-avatar tiny">
+                <div class="user-avatar tiny" :style="{ background: reply.avatarColor }">
                   {{ getInitial(reply.author) }}
                 </div>
                 <div class="reply-content">
@@ -165,8 +166,9 @@
 import { ref, computed, onMounted } from 'vue'
 import NavigationBar from '@/components/NavigationBar.vue'
 
-const userInitial = "U"
-const userName = "User"
+const userInitial = ref("U")
+const userName = ref("User")
+const postTextarea = ref(null)
 
 const newPost = ref({
   content: ''
@@ -182,9 +184,135 @@ const filters = [
   { id: 'question', label: 'Questions', emoji: '❓' }
 ]
 
+// Mock community posts data
 const posts = ref([
-  // ... (same as your existing posts data)
+  {
+    id: 1,
+    author: 'Alex Morgan',
+    content: 'Just completed my first 30-day mindfulness challenge! The morning breathing exercises have completely transformed how I start my day. Any tips for maintaining consistency?',
+    category: 'celebration',
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
+    likes: 24,
+    liked: false,
+    replies: [
+      {
+        id: 101,
+        author: 'Maya Chen',
+        content: 'Amazing achievement Alex! I found that setting a specific time each day helped me stay consistent. Keep going! 🌟',
+        timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000),
+        avatarColor: getRandomColor()
+      },
+      {
+        id: 102,
+        author: 'David Park',
+        content: 'Congratulations! Try pairing your mindfulness practice with an existing habit like making coffee. Works wonders for consistency!',
+        timestamp: new Date(Date.now() - 45 * 60 * 1000),
+        avatarColor: getRandomColor()
+      }
+    ],
+    showReplies: false,
+    newReply: '',
+    avatarColor: getRandomColor()
+  },
+  {
+    id: 2,
+    author: 'Sophia Williams',
+    content: 'Remember that anxiety doesn\'t define you. Today I practiced "box breathing" during a stressful meeting and it made such a difference. 4 seconds in, 4 hold, 4 out, 4 hold.',
+    category: 'tips',
+    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
+    likes: 42,
+    liked: true,
+    replies: [
+      {
+        id: 201,
+        author: 'Jamal Rivera',
+        content: 'Thank you for sharing this technique! Just tried it during my commute and felt immediate calm.',
+        timestamp: new Date(Date.now() - 3 * 60 * 60 * 1000),
+        avatarColor: getRandomColor()
+      }
+    ],
+    showReplies: false,
+    newReply: '',
+    avatarColor: getRandomColor()
+  },
+  {
+    id: 3,
+    author: 'Emma Thompson',
+    content: 'Struggling with negative self-talk today. Could use some gentle reminders about self-compassion. How do you practice kindness toward yourself on difficult days?',
+    category: 'support',
+    timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+    likes: 18,
+    liked: false,
+    replies: [
+      {
+        id: 301,
+        author: 'Carlos Ruiz',
+        content: 'Emma, I hear you. On tough days, I write myself a compassionate letter as if I were comforting a dear friend. Be gentle with yourself 💚',
+        timestamp: new Date(Date.now() - 20 * 60 * 60 * 1000),
+        avatarColor: getRandomColor()
+      },
+      {
+        id: 302,
+        author: 'Priya Patel',
+        content: 'I keep a "kindness jar" where I write down things I appreciate about myself. On hard days, I read them. You\'re doing better than you think!',
+        timestamp: new Date(Date.now() - 18 * 60 * 60 * 1000),
+        avatarColor: getRandomColor()
+      }
+    ],
+    showReplies: false,
+    newReply: '',
+    avatarColor: getRandomColor()
+  },
+  {
+    id: 4,
+    author: 'Liam Johnson',
+    content: 'Has anyone tried the 5-4-3-2-1 grounding technique? I find it super helpful for panic attacks. What are your favorite grounding methods?',
+    category: 'question',
+    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+    likes: 31,
+    liked: false,
+    replies: [
+      {
+        id: 401,
+        author: 'Sarah Miller',
+        content: '5-4-3-2-1 is my go-to! I also love "butterfly hugs" - crossing arms and tapping shoulders alternately. Sending calm vibes 🦋',
+        timestamp: new Date(Date.now() - 1.5 * 24 * 60 * 60 * 1000),
+        avatarColor: getRandomColor()
+      }
+    ],
+    showReplies: false,
+    newReply: '',
+    avatarColor: getRandomColor()
+  },
+  {
+    id: 5,
+    author: 'Jordan Lee',
+    content: 'Today I managed to notice my stress building and took a 5-minute walk instead of reacting immediately. Small progress still counts!',
+    category: 'celebration',
+    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
+    likes: 56,
+    liked: true,
+    replies: [],
+    showReplies: false,
+    newReply: '',
+    avatarColor: getRandomColor()
+  }
 ])
+
+// Generate random colors for avatars
+function getRandomColor() {
+  const colors = [
+    'linear-gradient(135deg, #4fb9af, #8bc34a)',
+    'linear-gradient(135deg, #FF6B6B, #FF8E53)',
+    'linear-gradient(135deg, #4776E6, #8E54E9)',
+    'linear-gradient(135deg, #00C9FF, #92FE9D)',
+    'linear-gradient(135deg, #FF5E62, #FF9966)',
+    'linear-gradient(135deg, #7F00FF, #E100FF)',
+    'linear-gradient(135deg, #00DBDE, #FC00FF)',
+    'linear-gradient(135deg, #FF9A9E, #FAD0C4)'
+  ]
+  return colors[Math.floor(Math.random() * colors.length)]
+}
 
 const getParticleStyle = (index) => {
   const size = Math.random() * 15 + 5
@@ -223,12 +351,138 @@ const getCategoryEmoji = (category) => {
   return emojis[category] || '💬'
 }
 
-const focusNewPost = () => {
-  document.querySelector('.post-textarea')?.focus()
+const getInitial = (name) => {
+  return name.split(' ').map(n => n[0]).join('').toUpperCase()
 }
 
-// ... (rest of your existing JavaScript functions remain the same)
+const formatTime = (timestamp) => {
+  const now = new Date()
+  const diff = now - timestamp
+  
+  const minutes = Math.floor(diff / 60000)
+  const hours = Math.floor(minutes / 60)
+  const days = Math.floor(hours / 24)
+  
+  if (minutes < 1) return 'Just now'
+  if (minutes < 60) return `${minutes}m ago`
+  if (hours < 24) return `${hours}h ago`
+  if (days === 1) return 'Yesterday'
+  if (days < 7) return `${days}d ago`
+  
+  return timestamp.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
 
+const focusNewPost = () => {
+  if (postTextarea.value) {
+    postTextarea.value.focus()
+  }
+}
+
+const createPost = () => {
+  if (!newPost.value.content.trim()) {
+    alert('Please write something to share!')
+    return
+  }
+  
+  // Create new post
+  const post = {
+    id: posts.value.length + 1,
+    author: userName.value,
+    content: newPost.value.content,
+    category: 'support', // Default category
+    timestamp: new Date(),
+    likes: 0,
+    liked: false,
+    replies: [],
+    showReplies: false,
+    newReply: '',
+    avatarColor: 'linear-gradient(135deg, #4fb9af, #8bc34a)' // Your brand color
+  }
+  
+  // Add to beginning of posts array
+  posts.value.unshift(post)
+  
+  // Clear the textarea
+  newPost.value.content = ''
+  
+  // Show success message
+  alert('Your post has been shared with the community! 🌟')
+}
+
+const setFilter = (filter) => {
+  activeFilter.value = filter
+}
+
+const toggleLike = (post) => {
+  post.liked = !post.liked
+  post.likes += post.liked ? 1 : -1
+  
+  // Optional: Save like to localStorage
+  const likes = JSON.parse(localStorage.getItem('communityLikes') || '{}')
+  likes[post.id] = post.liked
+  localStorage.setItem('communityLikes', JSON.stringify(likes))
+}
+
+const toggleReplies = (post) => {
+  post.showReplies = !post.showReplies
+  if (!post.newReply) {
+    post.newReply = ''
+  }
+}
+
+const addReply = (post) => {
+  if (!post.newReply.trim()) {
+    alert('Please write a supportive message!')
+    return
+  }
+  
+  const reply = {
+    id: post.replies.length + 1,
+    author: userName.value,
+    content: post.newReply,
+    timestamp: new Date(),
+    avatarColor: 'linear-gradient(135deg, #4fb9af, #8bc34a)'
+  }
+  
+  post.replies.push(reply)
+  post.newReply = ''
+  
+  // Optional: Save replies to localStorage
+  const replies = JSON.parse(localStorage.getItem('communityReplies') || '{}')
+  replies[post.id] = post.replies
+  localStorage.setItem('communityReplies', JSON.stringify(replies))
+}
+
+// Load user data on mounted
+onMounted(() => {
+  // Load user name from localStorage if available
+  const userData = localStorage.getItem('forgeMindUser')
+  if (userData) {
+    try {
+      const user = JSON.parse(userData)
+      userName.value = user.fullname || 'User'
+      userInitial.value = getInitial(userName.value)
+    } catch (error) {
+      console.error('Error loading user data:', error)
+    }
+  }
+  
+  // Load saved likes
+  const savedLikes = JSON.parse(localStorage.getItem('communityLikes') || '{}')
+  posts.value.forEach(post => {
+    if (savedLikes[post.id]) {
+      post.liked = savedLikes[post.id]
+    }
+  })
+  
+  // Load saved replies
+  const savedReplies = JSON.parse(localStorage.getItem('communityReplies') || '{}')
+  posts.value.forEach(post => {
+    if (savedReplies[post.id]) {
+      post.replies = savedReplies[post.id]
+    }
+  })
+})
 </script>
 
 <style scoped>

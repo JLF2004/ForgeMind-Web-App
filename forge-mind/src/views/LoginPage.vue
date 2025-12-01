@@ -58,7 +58,7 @@ const formData = ref({
 const handleLogin = () => {
   // Handle login logic
   console.log('Login data:', formData.value)
-  router.push('/services')
+  router.push('/dashboard')
 }
 </script>
 

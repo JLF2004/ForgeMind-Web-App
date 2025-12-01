@@ -7,9 +7,9 @@
         <p class="subtitle">Create your account to build mental resilience</p>
         
         <form @submit.prevent="handleSignup" class="auth-form">
-            <div class="form-group">
+          <div class="form-group">
             <label>Full Name:</label>
-            <input type="fullname" placeholder="Full Name" required v-model="formData.fullname">
+            <input type="text" placeholder="Full Name" required v-model="formData.fullname">
           </div>
           <div class="form-group">
             <label>Email Address:</label>
@@ -40,15 +40,43 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const formData = ref({
+  fullname: '',
   email: '',
   password: '',
   confirmPassword: ''
 })
 
+const handleSignup = () => {
+  // Validate passwords match
+  if (formData.value.password !== formData.value.confirmPassword) {
+    alert('Passwords do not match. Please try again.')
+    return
+  }
 
+  // Validate password strength
+  if (formData.value.password.length < 6) {
+    alert('Password should be at least 6 characters long.')
+    return
+  }
+
+  // Create user object
+  const user = {
+    fullname: formData.value.fullname,
+    email: formData.value.email,
+    password: formData.value.password,
+    createdAt: new Date().toISOString()
+  }
+
+  // Save to localStorage
+  localStorage.setItem('forgeMindUser', JSON.stringify(user))
+  
+  // Redirect to success page instead of showing popup
+  router.push('/success')
+}
 </script>
 
 <style scoped>
+/* Your original CSS remains exactly the same */
 .signup-page {
   position: relative;
   min-height: 100vh;
