@@ -548,7 +548,7 @@ selectedMood.value = null
   background: #f1f8e9;
   border-radius: 15px;
   border-left: 4px solid #4fb9af;
-  animation: slideInUp 10s ease;
+  animation: slideInUp 5s ease;
 }
 
 .mood-message p {
@@ -829,18 +829,23 @@ selectedMood.value = null
   gap: 10px;
   width: 12%;
   position: relative;
+  height: 200px; /* Add a fixed height for the container */
 }
 
 .day-bar.active .bar-fill {
   background: linear-gradient(to top, #4fb9af, #8bc34a);
+  height: var(--bar-height, 60%); /* Use variable for dynamic height */
 }
 
 .bar-fill {
   width: 100%;
+  height: 60%; /* Add a default height */
+  min-height: 30px; /* Ensure minimum visibility */
   background: linear-gradient(to top, #c5e8c8, #a8d5ba);
   border-radius: 8px 8px 0 0;
-  transition: height 0.5s ease;
+  transition: height 0.5s ease, background 0.3s ease;
   position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add subtle shadow for depth */
 }
 
 .day-label {
@@ -849,6 +854,7 @@ selectedMood.value = null
   font-size: 0.9rem;
   position: absolute;
   bottom: -25px;
+  white-space: nowrap; /* Prevent text wrapping */
 }
 
 .day-value {
@@ -857,12 +863,22 @@ selectedMood.value = null
   color: #2c5530;
   font-weight: 500;
   font-size: 0.8rem;
-  opacity: 0;
+  opacity: 100; /* Start hidden */
   transition: opacity 0.3s ease;
+  background: white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .day-bar:hover .day-value {
-  opacity: 1;
+  opacity: 100; /* Show on hover */
+}
+
+/* Optional: Add hover effect to bars */
+.day-bar:hover .bar-fill {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .journal-section {
