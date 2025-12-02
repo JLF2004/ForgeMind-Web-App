@@ -27,8 +27,23 @@
         <!-- Divider -->
         <div class="divider grow-in" :style="{ animationDelay: '0.6s' }"></div>
 
-        <!-- Therapist-Enhanced Workouts -->
+        <!-- Creative & Therapeutic Activities -->
         <section class="service-section slide-in-left" :style="{ animationDelay: '0.7s' }">
+          <div class="service-content">
+            <div class="service-icon">🎨</div>
+            <h3 class="service-title">Creative & Therapeutic Activity Workouts</h3>
+            <p class="service-description">
+              Hands-on workshops like pottery, art therapy, gardening, and music sessions. Engage your senses and find flow through creative expression.
+            </p>
+            <button class="learn-more-btn" @click="openModal('creative')">Learn More</button>
+          </div>
+        </section>
+
+        <!-- Divider -->
+        <div class="divider grow-in" :style="{ animationDelay: '0.9s' }"></div>
+
+        <!-- Therapist-Enhanced Workouts -->
+        <section class="service-section slide-in-left" :style="{ animationDelay: '1s' }">
           <div class="service-content">
             <div class="service-icon">👩‍⚕️</div>
             <h3 class="service-title">Therapist-Enhanced Workouts</h3>
@@ -40,10 +55,10 @@
         </section>
 
         <!-- Divider -->
-        <div class="divider grow-in" :style="{ animationDelay: '0.9s' }"></div>
+        <div class="divider grow-in" :style="{ animationDelay: '1.2s' }"></div>
 
         <!-- Social & Community Workouts -->
-        <section class="service-section slide-in-left" :style="{ animationDelay: '1s' }">
+        <section class="service-section slide-in-left" :style="{ animationDelay: '1.3s' }">
           <div class="service-content">
             <div class="service-icon">👥</div>
             <h3 class="service-title">Social & Community Workouts</h3>
@@ -57,18 +72,18 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer fade-in" :style="{ animationDelay: '1.2s' }">
+    <footer class="footer fade-in" :style="{ animationDelay: '1.5s' }">
       <div class="footer-content">
         <div class="footer-section">
           <h4>Follow us on:</h4>
           <div class="social-icons">
-            <a href="#" class="social-link bounce-in" aria-label="Instagram" :style="{ animationDelay: '1.4s' }">
+            <a href="#" class="social-link bounce-in" aria-label="Instagram" :style="{ animationDelay: '1.7s' }">
               <i class="fab fa-instagram"></i>
             </a>
-            <a href="#" class="social-link bounce-in" aria-label="Facebook" :style="{ animationDelay: '1.5s' }">
+            <a href="#" class="social-link bounce-in" aria-label="Facebook" :style="{ animationDelay: '1.8s' }">
               <i class="fab fa-facebook-f"></i>
             </a>
-            <a href="#" class="social-link bounce-in" aria-label="TikTok" :style="{ animationDelay: '1.6s' }">
+            <a href="#" class="social-link bounce-in" aria-label="TikTok" :style="{ animationDelay: '1.9s' }">
               <i class="fab fa-tiktok"></i>
             </a>
           </div>
@@ -76,11 +91,11 @@
         <div class="footer-section">
           <h4>Please contact us on:</h4>
           <div class="contact-info">
-            <p class="contact-item slide-in-right" :style="{ animationDelay: '1.7s' }">
+            <p class="contact-item slide-in-right" :style="{ animationDelay: '2s' }">
               <i class="fas fa-envelope contact-icon"></i>
               support@forgemind.com
             </p>
-            <p class="contact-item slide-in-right" :style="{ animationDelay: '1.8s' }">
+            <p class="contact-item slide-in-right" :style="{ animationDelay: '2.1s' }">
               <i class="fas fa-phone contact-icon"></i>
               021 624 7739
             </p>
@@ -130,6 +145,67 @@
           <button class="modal-btn secondary" @click="closeModal">Continue Browsing</button>
           <button class="modal-btn primary" @click="beginJourney('core')">
             Begin My Journey
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Creative & Therapeutic Activities Modal -->
+    <div v-if="modalType === 'creative'" class="modal-overlay" @click="closeModal">
+      <div class="modal-container" @click.stop>
+        <div class="modal-header">
+          <h3 class="modal-title">🎨 Creative & Therapeutic Activities</h3>
+          <button class="modal-close" @click="closeModal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p class="modal-text">
+            <strong>Engage your senses</strong> through hands-on creative workshops that promote mindfulness, reduce stress, and unlock self-expression.
+          </p>
+          <div class="modal-features">
+            <div class="feature-item">
+              <span class="feature-icon">🏺</span>
+              <span>Therapeutic Pottery & Clay Work</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🖌️</span>
+              <span>Art Therapy & Painting Sessions</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🌱</span>
+              <span>Mindful Gardening & Plant Care</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🎵</span>
+              <span>Music & Sound Healing Workshops</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">📓</span>
+              <span>Creative Writing & Poetry Circles</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🧶</span>
+              <span>Knitting & Fiber Arts for Mindfulness</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🕯️</span>
+              <span>Candle Making & Scent Therapy</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🥘</span>
+              <span>Therapeutic Cooking & Baking Classes</span>
+            </div>
+          </div>
+          <div class="modal-quote">
+            <p>"Creativity is intelligence having fun." - Albert Einstein</p>
+          </div>
+          <p class="modal-instruction">
+            Perfect for those who learn by doing. No artistic skill required—just an open mind and willingness to explore.
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="modal-btn secondary" @click="closeModal">Keep Exploring</button>
+          <button class="modal-btn primary" @click="exploreWorkshops('creative')">
+            Explore Workshops
           </button>
         </div>
       </div>
@@ -250,6 +326,13 @@ const beginJourney = (type) => {
   // In real app: router.push('/onboarding/core')
 }
 
+const exploreWorkshops = (type) => {
+  // For Creative & Therapeutic Activities
+  alert("🎨 Wonderful! You'll receive our monthly workshop calendar and can sign up for upcoming creative sessions that interest you.")
+  closeModal()
+  // In real app: router.push('/workshops')
+}
+
 const connectForSupport = (type) => {
   // For Therapist-Enhanced Workouts
   alert("🤝 Thank you for reaching out. A member of our team will contact you within 24 hours to discuss your needs and connect you with the right support.")
@@ -273,6 +356,48 @@ document.addEventListener('keydown', (e) => {
 </script>
 
 <style scoped>
+/* Updated color for Creative & Therapeutic Activities section */
+.service-section:nth-child(3) {
+  background: #E6F3FF; /* Light blue for Creative Activities */
+}
+
+/* Updated colors for other sections to maintain sequence */
+.service-section:nth-child(1) {
+  background: #C5E8C8; /* Green for Core Mental Workouts */
+}
+
+.service-section:nth-child(5) {
+  background: #F6F6F6; /* Light gray for Therapist-Enhanced Workouts */
+}
+
+.service-section:nth-child(7) {
+  background: #FFD6B3; /* Peach for Social & Community Workouts */
+}
+
+/* Add a specific color for the new section on hover effect */
+.service-section:nth-child(3):hover .learn-more-btn {
+  animation: gentlePulseBlue 3s infinite;
+}
+
+@keyframes gentlePulseBlue {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(66, 133, 244, 0.5);
+  }
+}
+
+.service-section:nth-child(3) .learn-more-btn {
+  background: #4285F4;
+}
+
+.service-section:nth-child(3) .learn-more-btn:hover {
+  background: #3367D6;
+  box-shadow: 0 8px 20px rgba(66, 133, 244, 0.4);
+}
+
+/* Rest of the existing styles remain the same */
 .services-page {
   position: relative;
   min-height: 100vh;
@@ -466,18 +591,6 @@ document.addEventListener('keydown', (e) => {
 
 .service-section:hover::before {
   left: 100%;
-}
-
-.service-section:nth-child(1) {
-  background: #C5E8C8; /* Green for Core Mental Workouts */
-}
-
-.service-section:nth-child(3) {
-  background: #F6F6F6; /* Light gray for Therapist-Enhanced Workouts */
-}
-
-.service-section:nth-child(5) {
-  background: #FFD6B3; /* Peach for Social & Community Workouts */
 }
 
 .service-content {
