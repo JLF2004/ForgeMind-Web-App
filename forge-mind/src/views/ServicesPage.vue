@@ -8,82 +8,155 @@
       <section class="services-intro">
         <h2 class="section-title fade-in">Our Mental Fitness Offerings</h2>
         <p class="intro-text fade-in" :style="{ animationDelay: '0.3s' }">Bridging the gap between self-help and therapy</p>
+        
+        <!-- Membership Info Banner -->
+        <div class="membership-info fade-in" :style="{ animationDelay: '0.4s' }">
+          <div class="membership-tiers">
+            <div class="tier basic-tier">
+              <span class="tier-badge">Basic</span>
+              <span>Core Mental Workouts</span>
+            </div>
+            <div class="tier premium-tier">
+              <span class="tier-badge">Premium</span>
+              <span>Creative Activities + 2 Social Features</span>
+            </div>
+            <div class="tier ultimate-tier">
+              <span class="tier-badge">Ultimate</span>
+              <span>All Features + Therapist Sessions</span>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- Services Sections -->
       <div class="services-container">
-        <!-- Core Mental Workouts -->
-        <section class="service-section slide-in-left" :style="{ animationDelay: '0.4s' }">
+        <!-- Core Mental Workouts - Basic Membership -->
+        <section class="service-section slide-in-left accessible-section" :style="{ animationDelay: '0.5s' }">
           <div class="service-content">
             <div class="service-icon">🧠</div>
             <h3 class="service-title">Core Mental Workouts</h3>
             <p class="service-description">
               Guided journaling, mood tracking, visualization, and goal-setting exercises. Perfect for building daily mental fitness habits
             </p>
+            <div class="membership-access basic-access">
+              <span class="access-badge basic">Basic</span>
+              <span>Included in Free Membership</span>
+            </div>
             <button class="learn-more-btn" @click="openModal('core')">Learn More</button>
           </div>
         </section>
 
         <!-- Divider -->
-        <div class="divider grow-in" :style="{ animationDelay: '0.6s' }"></div>
+        <div class="divider grow-in" :style="{ animationDelay: '0.7s' }"></div>
 
-        <!-- Creative & Therapeutic Activities -->
-        <section class="service-section slide-in-left" :style="{ animationDelay: '0.7s' }">
+        <!-- Creative & Therapeutic Activities - Premium Membership -->
+        <section class="service-section slide-in-left" :class="{ 'accessible-section': userMembership === 'premium' || userMembership === 'ultimate', 'locked-section': !(userMembership === 'premium' || userMembership === 'ultimate') }" :style="{ animationDelay: '0.8s' }">
           <div class="service-content">
             <div class="service-icon">🎨</div>
             <h3 class="service-title">Creative & Therapeutic Activity Workouts</h3>
             <p class="service-description">
               Hands-on workshops like pottery, art therapy, gardening, and music sessions. Engage your senses and find flow through creative expression.
             </p>
-            <button class="learn-more-btn" @click="openModal('creative')">Learn More</button>
+            <div class="membership-access" :class="userMembership === 'premium' || userMembership === 'ultimate' ? 'premium-access' : 'locked-access'">
+              <span class="access-badge" :class="userMembership === 'premium' || userMembership === 'ultimate' ? 'premium' : 'locked'">
+                {{ userMembership === 'premium' || userMembership === 'ultimate' ? 'Premium' : 'Locked' }}
+              </span>
+              <span v-if="userMembership === 'premium' || userMembership === 'ultimate'">
+                Available in Your Plan
+              </span>
+              <span v-else>
+                Upgrade to Premium or Ultimate
+              </span>
+            </div>
+            <button 
+              class="learn-more-btn" 
+              :class="{ 'locked-btn': !(userMembership === 'premium' || userMembership === 'ultimate') }"
+              @click="handleAccessClick('creative')"
+            >
+              {{ userMembership === 'premium' || userMembership === 'ultimate' ? 'Learn More' : 'Upgrade to Access' }}
+            </button>
           </div>
         </section>
 
         <!-- Divider -->
-        <div class="divider grow-in" :style="{ animationDelay: '0.9s' }"></div>
+        <div class="divider grow-in" :style="{ animationDelay: '1s' }"></div>
 
-        <!-- Therapist-Enhanced Workouts -->
-        <section class="service-section slide-in-left" :style="{ animationDelay: '1s' }">
+        <!-- Therapist-Enhanced Workouts - Ultimate Membership -->
+        <section class="service-section slide-in-left" :class="{ 'accessible-section': userMembership === 'ultimate', 'locked-section': userMembership !== 'ultimate' }" :style="{ animationDelay: '1.1s' }">
           <div class="service-content">
             <div class="service-icon">👩‍⚕️</div>
             <h3 class="service-title">Therapist-Enhanced Workouts</h3>
             <p class="service-description">
               Live 1-on-1 sessions, group therapy, and personalized plans with certified therapists. For those ready to deepen their practice.
             </p>
-            <button class="learn-more-btn" @click="openModal('therapist')">Learn More</button>
+            <div class="membership-access" :class="userMembership === 'ultimate' ? 'ultimate-access' : 'locked-access'">
+              <span class="access-badge" :class="userMembership === 'ultimate' ? 'ultimate' : 'locked'">
+                {{ userMembership === 'ultimate' ? 'Ultimate' : 'Locked' }}
+              </span>
+              <span v-if="userMembership === 'ultimate'">
+                Available in Your Plan
+              </span>
+              <span v-else>
+                Ultimate Membership Required
+              </span>
+            </div>
+            <button 
+              class="learn-more-btn" 
+              :class="{ 'locked-btn': userMembership !== 'ultimate' }"
+              @click="handleAccessClick('therapist')"
+            >
+              {{ userMembership === 'ultimate' ? 'Learn More' : 'Upgrade to Ultimate' }}
+            </button>
           </div>
         </section>
 
         <!-- Divider -->
-        <div class="divider grow-in" :style="{ animationDelay: '1.2s' }"></div>
+        <div class="divider grow-in" :style="{ animationDelay: '1.3s' }"></div>
 
-        <!-- Social & Community Workouts -->
-        <section class="service-section slide-in-left" :style="{ animationDelay: '1.3s' }">
+        <!-- Social & Community Workouts - Premium Membership (2 features limit) -->
+        <section class="service-section slide-in-left" :class="{ 'accessible-section': userMembership === 'premium' || userMembership === 'ultimate', 'locked-section': !(userMembership === 'premium' || userMembership === 'ultimate') }" :style="{ animationDelay: '1.4s' }">
           <div class="service-content">
             <div class="service-icon">👥</div>
             <h3 class="service-title">Social & Community Workouts</h3>
             <p class="service-description">
               Group reflections, shared journaling, and peer support circles. Build accountability and connection through community.
             </p>
-            <button class="learn-more-btn" @click="openModal('social')">Learn More</button>
+            <div class="membership-access" :class="userMembership === 'premium' || userMembership === 'ultimate' ? 'premium-access' : 'locked-access'">
+              <span class="access-badge" :class="userMembership === 'premium' || userMembership === 'ultimate' ? 'premium' : 'locked'">
+                {{ userMembership === 'premium' || userMembership === 'ultimate' ? 'Premium' : 'Locked' }}
+              </span>
+              <span v-if="userMembership === 'premium' || userMembership === 'ultimate'">
+                {{ userMembership === 'premium' ? '2 Features Available' : 'All Features Available' }}
+              </span>
+              <span v-else>
+                Upgrade to Premium or Ultimate
+              </span>
+            </div>
+            <button 
+              class="learn-more-btn" 
+              :class="{ 'locked-btn': !(userMembership === 'premium' || userMembership === 'ultimate') }"
+              @click="handleAccessClick('social')"
+            >
+              {{ userMembership === 'premium' || userMembership === 'ultimate' ? 'Learn More' : 'Upgrade to Access' }}
+            </button>
           </div>
         </section>
       </div>
     </main>
 
     <!-- Footer -->
-    <footer class="footer fade-in" :style="{ animationDelay: '1.5s' }">
+    <footer class="footer fade-in" :style="{ animationDelay: '1.6s' }">
       <div class="footer-content">
         <div class="footer-section">
           <h4>Follow us on:</h4>
           <div class="social-icons">
-            <a href="#" class="social-link bounce-in" aria-label="Instagram" :style="{ animationDelay: '1.7s' }">
+            <a href="#" class="social-link bounce-in" aria-label="Instagram" :style="{ animationDelay: '1.8s' }">
               <i class="fab fa-instagram"></i>
             </a>
-            <a href="#" class="social-link bounce-in" aria-label="Facebook" :style="{ animationDelay: '1.8s' }">
+            <a href="#" class="social-link bounce-in" aria-label="Facebook" :style="{ animationDelay: '1.9s' }">
               <i class="fab fa-facebook-f"></i>
             </a>
-            <a href="#" class="social-link bounce-in" aria-label="TikTok" :style="{ animationDelay: '1.9s' }">
+            <a href="#" class="social-link bounce-in" aria-label="TikTok" :style="{ animationDelay: '2s' }">
               <i class="fab fa-tiktok"></i>
             </a>
           </div>
@@ -91,11 +164,11 @@
         <div class="footer-section">
           <h4>Please contact us on:</h4>
           <div class="contact-info">
-            <p class="contact-item slide-in-right" :style="{ animationDelay: '2s' }">
+            <p class="contact-item slide-in-right" :style="{ animationDelay: '2.1s' }">
               <i class="fas fa-envelope contact-icon"></i>
               support@forgemind.com
             </p>
-            <p class="contact-item slide-in-right" :style="{ animationDelay: '2.1s' }">
+            <p class="contact-item slide-in-right" :style="{ animationDelay: '2.2s' }">
               <i class="fas fa-phone contact-icon"></i>
               021 624 7739
             </p>
@@ -113,6 +186,9 @@
           <button class="modal-close" @click="closeModal">&times;</button>
         </div>
         <div class="modal-body">
+          <div class="membership-modal-badge basic">
+            <i class="fas fa-check-circle"></i> Available in Basic Membership
+          </div>
           <p class="modal-text">
             <strong>Build daily mental fitness habits</strong> through structured exercises designed to strengthen your emotional resilience.
           </p>
@@ -158,6 +234,10 @@
           <button class="modal-close" @click="closeModal">&times;</button>
         </div>
         <div class="modal-body">
+          <div class="membership-modal-badge" :class="userMembership === 'premium' || userMembership === 'ultimate' ? 'premium' : 'locked'">
+            <i class="fas" :class="userMembership === 'premium' || userMembership === 'ultimate' ? 'fa-check-circle' : 'fa-lock'"></i>
+            {{ userMembership === 'premium' || userMembership === 'ultimate' ? 'Available in Your Plan' : 'Premium Membership Required' }}
+          </div>
           <p class="modal-text">
             <strong>Engage your senses</strong> through hands-on creative workshops that promote mindfulness, reduce stress, and unlock self-expression.
           </p>
@@ -204,8 +284,11 @@
         </div>
         <div class="modal-footer">
           <button class="modal-btn secondary" @click="closeModal">Keep Exploring</button>
-          <button class="modal-btn primary" @click="exploreWorkshops('creative')">
+          <button class="modal-btn primary" v-if="userMembership === 'premium' || userMembership === 'ultimate'" @click="exploreWorkshops('creative')">
             Explore Workshops
+          </button>
+          <button class="modal-btn upgrade" v-else @click="upgradeMembership('premium')">
+            Upgrade to Premium
           </button>
         </div>
       </div>
@@ -219,6 +302,10 @@
           <button class="modal-close" @click="closeModal">&times;</button>
         </div>
         <div class="modal-body">
+          <div class="membership-modal-badge" :class="userMembership === 'ultimate' ? 'ultimate' : 'locked'">
+            <i class="fas" :class="userMembership === 'ultimate' ? 'fa-check-circle' : 'fa-lock'"></i>
+            {{ userMembership === 'ultimate' ? 'Available in Your Plan' : 'Ultimate Membership Required' }}
+          </div>
           <p class="modal-text">
             <strong>Deepen your practice</strong> with professional guidance from certified mental health experts.
           </p>
@@ -249,8 +336,11 @@
         </div>
         <div class="modal-footer">
           <button class="modal-btn secondary" @click="closeModal">Not Now</button>
-          <button class="modal-btn primary" @click="connectForSupport('therapist')">
+          <button class="modal-btn primary" v-if="userMembership === 'ultimate'" @click="connectForSupport('therapist')">
             Connect for Support
+          </button>
+          <button class="modal-btn upgrade" v-else @click="upgradeMembership('ultimate')">
+            Upgrade to Ultimate
           </button>
         </div>
       </div>
@@ -264,25 +354,23 @@
           <button class="modal-close" @click="closeModal">&times;</button>
         </div>
         <div class="modal-body">
+          <div class="membership-modal-badge" :class="userMembership === 'premium' || userMembership === 'ultimate' ? 'premium' : 'locked'">
+            <i class="fas" :class="userMembership === 'premium' || userMembership === 'ultimate' ? 'fa-check-circle' : 'fa-lock'"></i>
+            {{ userMembership === 'premium' || userMembership === 'ultimate' ? 'Available in Your Plan' : 'Premium Membership Required' }}
+          </div>
+          <div v-if="userMembership === 'premium'" class="feature-limit-notice">
+            <p><strong>Note:</strong> Premium members can access 2 community features per month</p>
+          </div>
           <p class="modal-text">
             <strong>Build connections</strong> through shared experiences and mutual support with others on similar journeys.
           </p>
           <div class="modal-features">
-            <div class="feature-item">
-              <span class="feature-icon">💬</span>
-              <span>Group Reflection Circles</span>
-            </div>
-            <div class="feature-item">
-              <span class="feature-icon">📖</span>
-              <span>Shared Journaling Experiences</span>
-            </div>
-            <div class="feature-item">
-              <span class="feature-icon">🤗</span>
-              <span>Peer Support Networks</span>
-            </div>
-            <div class="feature-item">
-              <span class="feature-icon">🌟</span>
-              <span>Accountability Partnerships</span>
+            <div class="feature-item" v-for="feature in socialFeatures" :key="feature.id">
+              <span class="feature-icon">{{ feature.icon }}</span>
+              <span>{{ feature.name }}</span>
+              <span v-if="userMembership === 'premium'" class="feature-selector">
+                <input type="checkbox" :id="'feature-' + feature.id" :disabled="selectedFeatures >= 2 && !feature.selected" v-model="feature.selected" @change="handleFeatureSelection">
+              </span>
             </div>
           </div>
           <div class="modal-quote">
@@ -294,8 +382,11 @@
         </div>
         <div class="modal-footer">
           <button class="modal-btn secondary" @click="closeModal">Maybe Later</button>
-          <button class="modal-btn primary" @click="joinCommunity('social')">
-            Join Our Community
+          <button class="modal-btn primary" v-if="userMembership === 'premium' || userMembership === 'ultimate'" @click="joinCommunity('social')">
+            {{ userMembership === 'premium' ? 'Select Features & Join' : 'Join Our Community' }}
+          </button>
+          <button class="modal-btn upgrade" v-else @click="upgradeMembership('premium')">
+            Upgrade to Premium
           </button>
         </div>
       </div>
@@ -304,10 +395,21 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import NavigationBar from '@/components/NavigationBar.vue'
 
 const modalType = ref(null)
+const userMembership = ref('basic') // Default to basic. Change to 'premium' or 'ultimate' to test
+const socialFeatures = ref([
+  { id: 1, name: 'Group Reflection Circles', icon: '💬', selected: false },
+  { id: 2, name: 'Shared Journaling Experiences', icon: '📖', selected: false },
+  { id: 3, name: 'Peer Support Networks', icon: '🤗', selected: false },
+  { id: 4, name: 'Accountability Partnerships', icon: '🌟', selected: false }
+])
+
+const selectedFeatures = computed(() => {
+  return socialFeatures.value.filter(f => f.selected).length
+})
 
 const openModal = (type) => {
   modalType.value = type
@@ -319,43 +421,252 @@ const closeModal = () => {
   document.body.style.overflow = 'auto'
 }
 
+const handleAccessClick = (type) => {
+  if (type === 'core') {
+    openModal('core')
+    return
+  }
+  
+  if (type === 'creative') {
+    if (userMembership.value === 'premium' || userMembership.value === 'ultimate') {
+      openModal('creative')
+    } else {
+      openModal('creative') // Still show modal but with upgrade option
+    }
+    return
+  }
+  
+  if (type === 'therapist') {
+    if (userMembership.value === 'ultimate') {
+      openModal('therapist')
+    } else {
+      openModal('therapist') // Still show modal but with upgrade option
+    }
+    return
+  }
+  
+  if (type === 'social') {
+    if (userMembership.value === 'premium' || userMembership.value === 'ultimate') {
+      openModal('social')
+    } else {
+      openModal('social') // Still show modal but with upgrade option
+    }
+    return
+  }
+}
+
+const handleFeatureSelection = () => {
+  if (selectedFeatures.value > 2) {
+    // Find the first selected feature that's not the current one and deselect it
+    const extraFeature = socialFeatures.value.find(f => f.selected)
+    if (extraFeature) {
+      extraFeature.selected = false
+    }
+  }
+}
+
+const upgradeMembership = (tier) => {
+  alert(`🎉 Let's upgrade your membership to ${tier}! You'll be redirected to our upgrade page.`)
+  closeModal()
+  // In real app: router.push('/upgrade/' + tier)
+}
+
 const beginJourney = (type) => {
-  // For Core Mental Workouts
   alert("🌱 Let's begin your mental fitness journey! We'll guide you through setting up your first core workout routine.")
   closeModal()
-  // In real app: router.push('/onboarding/core')
 }
 
 const exploreWorkshops = (type) => {
-  // For Creative & Therapeutic Activities
   alert("🎨 Wonderful! You'll receive our monthly workshop calendar and can sign up for upcoming creative sessions that interest you.")
   closeModal()
-  // In real app: router.push('/workshops')
 }
 
 const connectForSupport = (type) => {
-  // For Therapist-Enhanced Workouts
   alert("🤝 Thank you for reaching out. A member of our team will contact you within 24 hours to discuss your needs and connect you with the right support.")
   closeModal()
-  // In real app: router.push('/therapist-connect')
 }
 
 const joinCommunity = (type) => {
-  // For Social & Community Workouts
-  alert("👋 Welcome to our community! You'll receive an invitation to our next group session and access to our private community space.")
+  if (userMembership.value === 'premium') {
+    const selected = socialFeatures.value.filter(f => f.selected).map(f => f.name)
+    alert(`👋 Welcome to our community! You've selected: ${selected.join(', ')}. You'll receive invitations to these sessions.`)
+  } else {
+    alert("👋 Welcome to our community! You'll receive an invitation to our next group session and access to our private community space.")
+  }
   closeModal()
-  // In real app: router.push('/community-join')
 }
 
 // Close modal with Escape key
-document.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && modalType.value) {
-    closeModal()
-  }
+onMounted(() => {
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && modalType.value) {
+      closeModal()
+    }
+  })
 })
 </script>
 
 <style scoped>
+/* Membership Info Banner */
+.membership-info {
+  background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+  border-radius: 12px;
+  padding: 20px;
+  margin: 30px auto;
+  max-width: 800px;
+  border: 2px solid #dee2e6;
+}
+
+.membership-tiers {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.tier {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 15px;
+  border-radius: 8px;
+  min-width: 180px;
+}
+
+.basic-tier {
+  background: #e8f5e9;
+  border: 2px solid #c5e8c8;
+}
+
+.premium-tier {
+  background: #e3f2fd;
+  border: 2px solid #bbdefb;
+}
+
+.ultimate-tier {
+  background: #f3e5f5;
+  border: 2px solid #e1bee7;
+}
+
+.tier-badge {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.basic-tier .tier-badge {
+  background: #4caf50;
+  color: white;
+}
+
+.premium-tier .tier-badge {
+  background: #2196f3;
+  color: white;
+}
+
+.ultimate-tier .tier-badge {
+  background: #9c27b0;
+  color: white;
+}
+
+.tier span:last-child {
+  font-size: 0.9rem;
+  text-align: center;
+  color: #555;
+}
+
+/* Membership Access Indicators */
+.membership-access {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 10px;
+  border-radius: 8px;
+  font-family: 'Playfair Display', serif;
+}
+
+.basic-access {
+  background: #e8f5e9;
+}
+
+.premium-access {
+  background: #e3f2fd;
+}
+
+.ultimate-access {
+  background: #f3e5f5;
+}
+
+.locked-access {
+  background: #f5f5f5;
+  border: 2px dashed #ddd;
+}
+
+.access-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: white;
+}
+
+.access-badge.basic {
+  background: #4caf50;
+}
+
+.access-badge.premium {
+  background: #2196f3;
+}
+
+.access-badge.ultimate {
+  background: #9c27b0;
+}
+
+.access-badge.locked {
+  background: #757575;
+}
+
+/* Locked Sections */
+.locked-section {
+  opacity: 0.9;
+  position: relative;
+}
+
+.locked-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(2px);
+  z-index: 1;
+  border-radius: 15px;
+}
+
+.locked-section .service-content {
+  position: relative;
+  z-index: 2;
+}
+
+.locked-btn {
+  background: #757575 !important;
+  cursor: not-allowed !important;
+  animation: none !important;
+}
+
+.locked-btn:hover {
+  background: #757575 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
 /* Updated color for Creative & Therapeutic Activities section */
 .service-section:nth-child(3) {
   background: #E6F3FF; /* Light blue for Creative Activities */
@@ -395,6 +706,72 @@ document.addEventListener('keydown', (e) => {
 .service-section:nth-child(3) .learn-more-btn:hover {
   background: #3367D6;
   box-shadow: 0 8px 20px rgba(66, 133, 244, 0.4);
+}
+
+/* Modal Membership Badges */
+.membership-modal-badge {
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+}
+
+.membership-modal-badge.basic {
+  background: #e8f5e9;
+  color: #2e7d32;
+  border: 2px solid #c5e8c8;
+}
+
+.membership-modal-badge.premium {
+  background: #e3f2fd;
+  color: #1565c0;
+  border: 2px solid #bbdefb;
+}
+
+.membership-modal-badge.ultimate {
+  background: #f3e5f5;
+  color: #7b1fa2;
+  border: 2px solid #e1bee7;
+}
+
+.membership-modal-badge.locked {
+  background: #f5f5f5;
+  color: #616161;
+  border: 2px dashed #bdbdbd;
+}
+
+.feature-limit-notice {
+  background: #fff3cd;
+  border: 2px solid #ffeaa7;
+  border-radius: 8px;
+  padding: 10px;
+  margin: 15px 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #856404;
+}
+
+.feature-selector {
+  margin-left: auto;
+}
+
+.feature-selector input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.modal-btn.upgrade {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+}
+
+.modal-btn.upgrade:hover {
+  background: linear-gradient(135deg, #f57c00, #e65100);
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(245, 124, 0, 0.4);
 }
 
 /* Rest of the existing styles remain the same */
@@ -573,7 +950,7 @@ document.addEventListener('keydown', (e) => {
   opacity: 0; /* Will be animated in */
 }
 
-.service-section:hover {
+.accessible-section:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
@@ -589,7 +966,7 @@ document.addEventListener('keydown', (e) => {
   transition: left 0.6s ease;
 }
 
-.service-section:hover::before {
+.accessible-section:hover::before {
   left: 100%;
 }
 
@@ -606,7 +983,7 @@ document.addEventListener('keydown', (e) => {
   transition: transform 0.3s ease;
 }
 
-.service-section:hover .service-icon {
+.accessible-section:hover .service-icon {
   transform: scale(1.1) rotate(5deg);
 }
 
@@ -990,6 +1367,16 @@ document.addEventListener('keydown', (e) => {
 
   .service-section {
     padding: 30px 20px;
+  }
+
+  .membership-tiers {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .tier {
+    width: 100%;
+    max-width: 300px;
   }
 
   .footer-content {
