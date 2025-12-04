@@ -11,7 +11,7 @@
       <!-- Welcome Section -->
       <section class="welcome-section fade-in">
         <div class="welcome-content">
-          <h1>Welcome back, {{ userName }}! 🌱</h1>
+          <h1>Welcome, {{ userName }}! 🌱</h1>
           <p class="welcome-subtitle">Ready for today's mental fitness workout?</p>
           
           <div class="daily-checkin slide-in-up" :style="{ animationDelay: '0.3s' }">
