@@ -32,19 +32,47 @@
               <div class="editor-actions">
                 <div class="char-count">{{ newPost.content.length }}/280</div>
                 <div class="action-buttons">
+                  <div class="privacy-toggle">
+                    <label class="toggle-label">
+                      <input 
+                        type="checkbox" 
+                        v-model="newPost.anonymous"
+                        class="toggle-input"
+                      >
+                      <span class="toggle-slider"></span>
+                      <span class="toggle-text">
+                        {{ newPost.anonymous ? 'Sharing Anonymously' : 'Share with Name' }}
+                      </span>
+                    </label>
+                  </div>
                   <button 
+                    v-if="!newPost.anonymous"
                     class="btn post-btn glow-hover" 
-                    @click="createPost"
+                    @click="createPost(false)"
                     :disabled="!newPost.content.trim()"
                   >
                     Share with Community
+                  </button>
+                  <button 
+                    v-else
+                    class="btn anonymous-btn glow-hover" 
+                    @click="createPost(true)"
+                    :disabled="!newPost.content.trim()"
+                  >
+                    <span class="anonymous-icon">🕊️</span>
+                    Share Anonymously
                   </button>
                 </div>
               </div>
             </div>
           </div>
           <div class="post-tips slide-in-right" :style="{ animationDelay: '0.5s' }">
-            <p><strong>Remember:</strong> This is a safe space. Be kind, supportive, and respectful to everyone.</p>
+            <p v-if="newPost.anonymous">
+              <strong>Anonymous Mode:</strong> Your identity will be hidden. You'll appear as "Mindful Friend".
+            </p>
+            <p v-else>
+              <strong>Remember:</strong> This is a safe space. Be kind, supportive, and respectful to everyone.
+            </p>
           </div>
         </div>
 
@@ -171,7 +199,8 @@ const userName = ref("User")
 const postTextarea = ref(null)
 
 const newPost = ref({
-  content: ''
+  content: '',
+  anonymous: false
 })
 
 const activeFilter = ref('all')
@@ -314,6 +343,15 @@ function getRandomColor() {
   return colors[Math.floor(Math.random() * colors.length)]
 }
 
+// Function to generate anonymous username
+function generateAnonymousUsername() {
+  const adjectives = ['Mindful', 'Calm', 'Peaceful', 'Gentle', 'Serene', 'Hopeful', 'Joyful', 'Brave', 'Kind', 'Wise']
+  const nouns = ['Friend', 'Traveler', 'Soul', 'Heart', 'Spirit', 'Buddy', 'Companion', 'Being', 'Listener', 'Helper']
+  const randomAdj = adjectives[Math.floor(Math.random() * adjectives.length)]
+  const randomNoun = nouns[Math.floor(Math.random() * nouns.length)]
+  return `${randomAdj} ${randomNoun}`
+}
+
 const getParticleStyle = (index) => {
   const size = Math.random() * 15 + 5
   const duration = Math.random() * 15 + 10
@@ -378,25 +416,29 @@ const focusNewPost = () => {
   }
 }
 
-const createPost = () => {
+const createPost = (isAnonymous = false) => {
   if (!newPost.value.content.trim()) {
     alert('Please write something to share!')
     return
   }
   
+  const postAuthor = isAnonymous ? generateAnonymousUsername() : userName.value
+  const postAvatarColor = isAnonymous ? 'linear-gradient(135deg, #8e9eab, #eef2f3)' : 'linear-gradient(135deg, #4fb9af, #8bc34a)'
+  
   // Create new post
   const post = {
-    id: posts.value.length + 1,
-    author: userName.value,
+    id: Date.now(),
+    author: postAuthor,
     content: newPost.value.content,
-    category: 'support', // Default category
+    category: 'support',
     timestamp: new Date(),
     likes: 0,
     liked: false,
     replies: [],
     showReplies: false,
     newReply: '',
-    avatarColor: 'linear-gradient(135deg, #4fb9af, #8bc34a)' // Your brand color
+    avatarColor: postAvatarColor,
+    isAnonymous: isAnonymous
   }
   
   // Add to beginning of posts array
@@ -404,9 +446,13 @@ const createPost = () => {
   
   // Clear the textarea
   newPost.value.content = ''
+  newPost.value.anonymous = false
   
   // Show success message
-  alert('Your post has been shared with the community! 🌟')
+  const message = isAnonymous ? 
+    'Your anonymous post has been shared! 🕊️' : 
+    'Your post has been shared with the community! 🌟'
+  alert(message)
 }
 
 const setFilter = (filter) => {
@@ -436,12 +482,18 @@ const addReply = (post) => {
     return
   }
   
+  // Replies use the same anonymous setting as the main post editor
+  const replyAuthor = newPost.value.anonymous ? generateAnonymousUsername() : userName.value
+  const replyAvatarColor = newPost.value.anonymous ? 
+    'linear-gradient(135deg, #8e9eab, #eef2f3)' : 
+    'linear-gradient(135deg, #4fb9af, #8bc34a)'
+  
   const reply = {
-    id: post.replies.length + 1,
-    author: userName.value,
+    id: Date.now(),
+    author: replyAuthor,
     content: post.newReply,
     timestamp: new Date(),
-    avatarColor: 'linear-gradient(135deg, #4fb9af, #8bc34a)'
+    avatarColor: replyAvatarColor
   }
   
   post.replies.push(reply)
@@ -688,20 +740,83 @@ onMounted(() => {
 
 .editor-actions {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .char-count {
   color: #4a7c59;
   font-size: 0.9rem;
+  align-self: flex-start;
 }
 
-.post-btn {
+.action-buttons {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 15px;
+}
+
+.privacy-toggle {
+  flex-shrink: 0;
+}
+
+.toggle-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #4a7c59;
+}
+
+.toggle-input {
+  display: none;
+}
+
+.toggle-slider {
+  position: relative;
+  width: 50px;
+  height: 24px;
+  background: #e0f2e1;
+  border-radius: 34px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.toggle-slider:before {
+  content: "";
+  position: absolute;
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.toggle-input:checked + .toggle-slider {
+  background: linear-gradient(135deg, #8e9eab, #eef2f3);
+}
+
+.toggle-input:checked + .toggle-slider:before {
+  transform: translateX(26px);
+}
+
+.toggle-text {
+  font-weight: 500;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.post-btn,
+.anonymous-btn {
   background: linear-gradient(135deg, #4fb9af, #8bc34a);
   color: white;
   border: none;
-  padding: 10px 25px;
+  padding: 12px 25px;
   border-radius: 20px;
   font-weight: 500;
   cursor: pointer;
@@ -709,9 +824,26 @@ onMounted(() => {
   position: relative;
   overflow: hidden;
   z-index: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
+  min-height: 44px;
 }
 
-.post-btn.glow-hover::before {
+.anonymous-btn {
+  background: linear-gradient(135deg, #8e9eab, #eef2f3);
+  color: #5a6c7b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.anonymous-icon {
+  font-size: 1.1rem;
+}
+
+/* Glow hover effects */
+.post-btn.glow-hover::before,
+.anonymous-btn.glow-hover::before {
   content: '';
   position: absolute;
   top: 0;
@@ -722,6 +854,9 @@ onMounted(() => {
   z-index: -1;
   opacity: 0;
   transition: opacity 0.4s ease;
+}
+
+.post-btn.glow-hover::before {
   background: linear-gradient(135deg, 
     rgba(79, 185, 175, 0.8) 0%,
     rgba(79, 185, 175, 0.9) 25%,
@@ -731,24 +866,37 @@ onMounted(() => {
   );
 }
 
-.post-btn.glow-hover:hover::before {
-  opacity: 1;
+.anonymous-btn.glow-hover::before {
+  background: linear-gradient(135deg, 
+    rgba(142, 158, 171, 0.8) 0%,
+    rgba(142, 158, 171, 0.9) 25%,
+    rgba(142, 158, 171, 1) 50%,
+    rgba(142, 158, 171, 0.9) 75%,
+    rgba(142, 158, 171, 0.8) 100%
+  );
 }
 
-.post-btn:hover:not(:disabled) {
+.post-btn:hover:is(:enabled),
+.anonymous-btn:hover:is(:enabled) {
   transform: translateY(-2px);
   box-shadow: 0 5px 15px rgba(79, 185, 175, 0.3);
 }
 
-.post-btn.glow-hover:hover {
-  box-shadow: 
-    0 5px 15px rgba(79, 185, 175, 0.3),
-    0 0 20px rgba(79, 185, 175, 0.5);
+.anonymous-btn:hover:not(:enabled) {
+  box-shadow: 0 5px 15px rgba(142, 158, 171, 0.3);
 }
 
-.post-btn:disabled {
+.post-btn.glow-hover:hover:not(:enabled)::before,
+.anonymous-btn.glow-hover:hover:not(:enabled)::before {
+  opacity: 1;
+}
+
+.post-btn:enabled:active,
+.anonymous-btn:enabled:active {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
 }
 
 .feed-filters {
@@ -1073,23 +1221,40 @@ onMounted(() => {
   }
   
   .editor-actions {
-    flex-direction: column;
     gap: 10px;
-    align-items: stretch;
   }
   
-  .post-btn {
+  .action-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 15px;
+  }
+  
+  .privacy-toggle {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .toggle-label {
+    justify-content: center;
     width: 100%;
   }
   
-  .reply-input {
-    flex-direction: column;
+  .post-btn,
+  .anonymous-btn {
+    width: 100%;
+    justify-content: center;
   }
   
   .feed-filters {
     overflow-x: auto;
     justify-content: flex-start;
     padding-bottom: 10px;
+  }
+  
+  .reply-input {
+    flex-direction: column;
   }
 }
 </style>
