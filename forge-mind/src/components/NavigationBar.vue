@@ -22,6 +22,8 @@
         <span class="nav-separator">|</span>
          <router-link to="/journal" class="nav-link">JOURNAL</router-link>
         <span class="nav-separator">|</span>
+ <router-link to="/subscription" class="nav-link">SUBSCRIPTION</router-link>
+        <span class="nav-separator">|</span>
         <router-link to="/contact" class="nav-link">CONTACT</router-link>
       </div>
 

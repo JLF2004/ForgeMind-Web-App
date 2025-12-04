@@ -10,6 +10,7 @@ import DashboardPage from '@/views/DashboardPage.vue'
 import JournalPage from '@/views/JournalPage.vue'
 import ResourcesPage from '@/views/ResourcesPage.vue'
 import CommunityPage from '@/views/CommunityPage.vue'
+import SubscriptionPage from '@/views/SubscriptionPage.vue' 
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
@@ -23,6 +24,7 @@ const routes = [
   { path: '/journal', name: 'Journal', component: JournalPage },
   { path: '/resources', name: 'Resources', component: ResourcesPage },
   { path: '/community', name: 'Community', component: CommunityPage },
+  { path: '/subscription', name: 'Subscription', component: SubscriptionPage },
 ]
 
 const router = createRouter({
